@@ -65,9 +65,7 @@ class Player2 extends Player {
     }
     controls(){
         if(b1.y+random(-5,5) > this.y){
-            if ((this.y - this.sizeY) > -60){
             this.y+=6
-            }
         }
         if(b1.y-random(-5, 5) < this.y){
             this.y-=6
