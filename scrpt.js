@@ -4,8 +4,10 @@ const width = cv.width = 800
 const height = cv.height = 400
 var loose = false
 var already = true
+var points=0
+
 function random(min, max) {
-    const num = Math.floor(Math.random() * (max - min + 1)) + min
+    var num = Math.floor(Math.random() * (max - min + 1)) + min
     return num
 }
 class Entity {
@@ -64,10 +66,10 @@ class Player2 extends Player {
         super(x, y, velX, velY, color)
     }
     controls(){
-        if(b1.y+random(-5,5) > this.y){
+        if(b1.y+random(-3,3) > this.y){
             this.y+=6
         }
-        if(b1.y-random(-5, 5) < this.y){
+        if(b1.y+random(-3,3) < this.y){
             this.y-=6
         }
     }
@@ -86,11 +88,12 @@ class Ball extends Entity {
     move() {
         if ((this.x + this.size) >= width) {
             this.velX = -(this.velX)
-            loose = true
+            points++
         }
         if ((this.x - this.size) <= 0) {
             this.velX = -(this.velX)
-            loose = true
+            alert('you lose!')
+            window.location.reload()
         }
         if ((this.y + this.size) >= height) {
             this.velY = -(this.velY)
@@ -104,19 +107,25 @@ class Ball extends Entity {
 }
 var j1 = new Player(0, 10, 0, 10, "red")
 var j2 = new Player2(width-10, 10, 0, 10, "purple")
-var b1 = new Ball(width / 2, height / 2, random(-3, 3), random(-3, 3))
+var b1 = new Ball(width / 2, height / 2, 2, 0)
 function colide() {
-    if (b1.x === 10 && (b1.y >= j1.y && b1.y <= j1.y + j1.sizeY)) {
-        b1.velX = -b1.velX + 2
-        b1.velY = -b1.velY + 2
+    if (b1.x === 10 && (b1.y >= j1.y-1 && b1.y <= j1.y + j1.sizeY+1)) {
+        b1.velX = -(b1.velX+1)     //(b1.velX+random(1,2))
+        b1.velY = -(b1.velY+1)     //(b1.velY+random(-2,2))
         j1.color = "white"
         console.log('colide')
-    }if(b1.x === width-10 && (b1.y >= j2.y && b1.y <= j2.y + j2.sizeY)) {
-        b1.velX = -b1.velX-2
-        b1.velY = -b1.velY-2
-        j2.color = "white"
+    }if(b1.x === width-10 && (b1.y >= j2.y-1 && b1.y <= j2.y + j2.sizeY+1)) {
+        b1.velX = -(b1.velX+1)     //(b1.velX+random(1,2))
+        b1.velY = -(b1.velY+1)     //(b1.velY+random(-2,2))
         console.log('colide')
     }
+}
+function count(){
+    ctx.beginPath()
+    ctx.font = "20px Arial"
+    ctx.textAlign = "right"
+    ctx.fillStyle = "white"
+    ctx.fillText(`your points: ${points}`, width, 20)
 }
 
 loop()
@@ -124,32 +133,30 @@ function loop() {
     ctx.beginPath()
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, width, height);
-    if (loose === true) {
-        window.location.reload()
-    } else {
+        
+    ctx.beginPath()
+    ctx.fillStyle = 'white'
+    ctx.fillRect(width / 2, 0, 5, height)
+
+    colide()
+    count()
+    b1.move()
+    b1.render()
+    j1.controls()
+    j1.render()
+    j2.render()
+    j2.controls()
+
+    if (already === true) {
+        requestAnimationFrame(loop)
+    } else if (already === false) {
         ctx.beginPath()
-        ctx.fillStyle = 'white'
-        ctx.fillRect(width / 2, 0, 5, height)
-
-        colide()
-
-        b1.move()
-        b1.render()
-        j1.controls()
-        j1.render()
-        j2.render()
-        j2.controls()
-        if (already === true) {
-            requestAnimationFrame(loop)
-        } else if (already === false) {
-            ctx.beginPath()
-            ctx.fillStyle = "rgba(0,0,0,0.8)"
-            ctx.fillRect(0, 0, width, height);
-            ctx.beginPath()
-            ctx.font = "40px Arial"
-            ctx.textAlign = "center"
-            ctx.fillStyle = "white"
-            ctx.fillText("Pause", width / 2, height / 2)
-        }
+        ctx.fillStyle = "rgba(0,0,0,0.8)"
+        ctx.fillRect(0, 0, width, height);
+        ctx.beginPath()
+        ctx.font = "40px Arial"
+        ctx.textAlign = "center"
+        ctx.fillStyle = "white"
+        ctx.fillText("Pause", width / 2, height / 2)
     }
 }
