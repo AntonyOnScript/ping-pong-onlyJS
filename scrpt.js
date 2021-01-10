@@ -62,15 +62,16 @@ class Player extends Entity {
     }
 }
 class Player2 extends Player {
-    constructor(x, y, velX, velY, color) {
+    constructor(x, y, velX, velY, color, variable) {
         super(x, y, velX, velY, color)
+        this.variable=variable
     }
     controls(){
-        if(b1.y+random(-3,3) > this.y){
-            this.y+=6
+        if(b1.y+this.variable > this.y){
+            this.y+=this.velY
         }
-        if(b1.y+random(-3,3) < this.y){
-            this.y-=6
+        if(b1.y+this.variable < this.y){
+            this.y-=this.velY
         }
     }
 }
@@ -105,18 +106,33 @@ class Ball extends Entity {
         this.y += this.velY
     }
 }
-var j1 = new Player(0, 10, 0, 10, "red")
-var j2 = new Player2(width-10, 10, 0, 10, "purple")
-var b1 = new Ball(width / 2, height / 2, 2, 0)
+var velXBall = random(-2,2)
+var velYBall = random(-2,2)
+var vYBall = velYBall
+var vXBall = velXBall
+
+var j1 = new Player(0, 200, 0, 5, "red")
+var j2 = new Player2(width-10, 200, 0, 5, "purple", random(-5,5))
+var b1 = new Ball(width / 2, height / 2, velXBall, velYBall)
 function colide() {
     if (b1.x === 10 && (b1.y >= j1.y-1 && b1.y <= j1.y + j1.sizeY+1)) {
-        b1.velX = -(b1.velX+1)     //(b1.velX+random(1,2))
-        b1.velY = -(b1.velY+1)     //(b1.velY+random(-2,2))
+        if(b1.velX <=3){
+            b1.velX = -(b1.velX-1)     //(b1.velX+random(1,2))
+            b1.velY = -(b1.velY-1)     //(b1.velY+random(-2,2))
+        }else if(b1.x >= 4){
+            b1.velX = -(b1.velX)
+            b1.velY = -(b1.velY)
+        }
         j1.color = "white"
         console.log('colide')
     }if(b1.x === width-10 && (b1.y >= j2.y-1 && b1.y <= j2.y + j2.sizeY+1)) {
-        b1.velX = -(b1.velX+1)     //(b1.velX+random(1,2))
-        b1.velY = -(b1.velY+1)     //(b1.velY+random(-2,2))
+        if(b1.velX <=3){
+            b1.velX = -(b1.velX+1)     //(b1.velX+random(1,2))
+            b1.velY = -(b1.velY+1)     //(b1.velY+random(-2,2))
+        }else if(b1.x >= 4){
+            b1.velX = -(b1.velX)
+            b1.velY = -(b1.velY)
+        }    //(b1.velY+random(-2,2))
         console.log('colide')
     }
 }
@@ -138,6 +154,13 @@ function loop() {
     ctx.fillStyle = 'white'
     ctx.fillRect(width / 2, 0, 5, height)
 
+    ctx.beginPath()
+    ctx.font = "20px Arial"
+    ctx.textAlign = "left"
+    ctx.fillStyle = "white"
+    ctx.fillText("Controls: w, a, s, d and Space for pause", 0, 20)
+
+    j2.variable=random(-4,4)
     colide()
     count()
     b1.move()
