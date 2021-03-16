@@ -8,7 +8,7 @@ var points=0
 
 function random(min, max) {
     var num = Math.floor(Math.random() * (max - min + 1)) + min
-    if(num!==0{
+    if(num!==0){
     return num
     }else{
     return random(min,max)
